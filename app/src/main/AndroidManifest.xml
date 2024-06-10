@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.musicplayer">
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+
+
 
     <application
         android:allowBackup="true"
@@ -13,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer"
         tools:targetApi="31">
+        <service
+            android:name=".NotificationService"
+            android:foregroundServiceType="mediaPlayback" />
+
         <activity
             android:name=".LocalActivity"
             android:exported="false"
@@ -30,7 +41,10 @@
             android:theme="@style/Theme.MusicPlayer.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop"> <!-- 设置launchMode为singleTop -->
+        </activity>
+
         <activity
             android:name=".HomeActivity"
             android:exported="true">

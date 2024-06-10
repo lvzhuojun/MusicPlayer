@@ -1,5 +1,8 @@
 package com.example.musicplayer;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     Animation animation;
     int songTotalTime;
+    NotificationService notificationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+
+        // 启动通知服务
+        notificationService = new NotificationService();
+        updateNotification(song.isPlaying());
     }
 
     private Handler handler = new Handler() {
@@ -130,10 +138,28 @@ public class MainActivity extends AppCompatActivity {
             song.start();
             imageView.startAnimation(animation);
             playButton.setBackgroundResource(R.drawable.baseline_pause_circle_24);
+            updateNotification(true);
         } else {
             song.pause();
             imageView.clearAnimation();
             playButton.setBackgroundResource(R.drawable.baseline_play_circle_24);
+            updateNotification(false);
         }
+    }
+
+    private void updateNotification(boolean isPlaying) {
+        Intent intent = new Intent(this, NotificationService.class);
+        intent.putExtra("isPlaying", isPlaying);
+        startService(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (song != null) {
+            song.release();
+            song = null;
+        }
+        stopService(new Intent(this, NotificationService.class));
     }
 }
